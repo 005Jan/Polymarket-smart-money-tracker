@@ -1,0 +1,41 @@
+# ── Dades sensibles i resultats locals ──────────────────────────────────────
+data/*.csv
+data/*.json
+data/*.log
+data/bot.log
+data/simulacion_trading*.csv
+data/smart_wallets.json
+
+# Mantenir l'estructura de la carpeta
+!data/.gitkeep
+
+# ── Python ──────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.env
+.venv
+
+# ── Docker ──────────────────────────────────────────────────────────────────
+*.pid
+
+# ── Sistema operatiu ────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# ── IDEs ────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.sublime-*
+
+# ── Backups ─────────────────────────────────────────────────────────────────
+*.bak
+*.backup
+data/*BACKUP*

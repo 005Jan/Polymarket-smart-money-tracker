@@ -1,0 +1,18 @@
+[Unit]
+Description=Polymarket CopyTrader Bot (Paper Trading)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+WorkingDirectory=/home/pi/copytrader
+ExecStart=/home/pi/copytrader/venv/bin/python main.py
+Restart=always
+RestartSec=30
+StandardOutput=journal
+StandardError=journal
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target

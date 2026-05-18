@@ -1,0 +1,18 @@
+services:
+  copytrader:
+    build: .
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/data
+    environment:
+      - DATA_DIR=/app/data
+    command: python main.py
+
+  sniper-catcher:
+    build: .
+    restart: unless-stopped
+    volumes:
+      - ./data:/app/data
+    environment:
+      - DATA_DIR=/app/data
+    command: python sniper_catcher.py --daemon
