@@ -305,8 +305,21 @@ def run():
         log.info(f"Radar: {len(trades)} trades recientes")
 
         # ── 2. Consenso ─────────────────────────────────────────────────────
-        signals = detect_consensus(trades, risk_manager=risk)
-        log.info(f"Consenso: {len(signals)} señal/es detectadas")
+        # Construïm un mapa wallet → metadata per detectar premium wallets
+        wallet_meta_map = {}
+        for w in registry.get_wallets():
+            wallet_meta_map[w.lower()] = registry.get_metadata(w)
+
+        signals = detect_consensus(
+            trades,
+            risk_manager=risk,
+            wallet_metadata=wallet_meta_map,
+        )
+        n_premium = sum(1 for s in signals if s.get("is_premium"))
+        log.info(
+            f"Consenso: {len(signals)} señal/es detectadas "
+            f"({n_premium} premium-individual)"
+        )
 
         # ── 3. Procesar señales nuevas ───────────────────────────────────────
         for sig in signals:

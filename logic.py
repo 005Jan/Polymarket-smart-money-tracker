@@ -10,6 +10,7 @@ from config import (
     CONSENSUS_WINDOW_MINUTES, MIN_WALLETS_FOR_SIGNAL,
     VIRTUAL_BANKROLL, KELLY_FRACTION, MAX_POSITION_PCT, MIN_POSITION_USD,
     QUARANTINE_STRIKES, QUARANTINE_DAYS, EV_MAX_SLIPPAGE_PCT,
+    PREMIUM_WALLET_MIN_PNL, PREMIUM_WALLET_MIN_WIN_RATE,
 )
 
 
@@ -188,9 +189,20 @@ def _is_buy(trade: dict) -> bool:
     return "BUY" in str(trade.get("type") or "").upper()
 
 
+def is_premium_wallet(metadata: dict) -> bool:
+    """
+    Decideix si una wallet és "premium" (track record extraordinari).
+    Una compra d'una premium wallet ja és senyal suficient (no cal consens).
+    """
+    pnl = float(metadata.get("pnl_usd", 0) or 0)
+    wr  = float(metadata.get("win_rate", 0) or 0)
+    return pnl >= PREMIUM_WALLET_MIN_PNL and wr >= PREMIUM_WALLET_MIN_WIN_RATE
+
+
 def detect_consensus(
     trades: list[dict],
     risk_manager: RiskManager | None = None,
+    wallet_metadata: dict | None = None,
 ) -> list[dict]:
     """
     Agrupa BUYs recientes por (conditionId, outcome).
@@ -246,20 +258,35 @@ def detect_consensus(
 
     signals = []
     for (market_id, outcome), group in groups.items():
-        if len(group) < MIN_WALLETS_FOR_SIGNAL:
+        wallets = [t.get("wallet", "") for t in group]
+
+        # ── Regla normal: requereix MIN_WALLETS_FOR_SIGNAL (típic: 2) ─────────
+        passes_consensus = len(group) >= MIN_WALLETS_FOR_SIGNAL
+
+        # ── Regla premium: 1 sola wallet d'elit ja és suficient ──────────────
+        is_premium_signal = False
+        if not passes_consensus and wallet_metadata:
+            for w in wallets:
+                meta = wallet_metadata.get(w.lower()) or wallet_metadata.get(w) or {}
+                if is_premium_wallet(meta):
+                    is_premium_signal = True
+                    break
+
+        if not (passes_consensus or is_premium_signal):
             continue
 
         prices = [float(t["price"]) for t in group if t.get("price") and float(t["price"]) > 0]
-        wallets = [t.get("wallet", "") for t in group]
 
         signals.append({
             "market_id":       market_id,
             "outcome":         outcome,
             "wallets":         wallets,
             "n_wallets":       len(wallets),
+            "is_premium":      is_premium_signal,
             "latest_trade":    max(t["_ts"] for t in group),
             "avg_entry_price": round(sum(prices) / len(prices), 4) if prices else None,
         })
 
-    signals.sort(key=lambda s: s["n_wallets"], reverse=True)
+    # Ordenar: primer els de més wallets, després els premium
+    signals.sort(key=lambda s: (s["n_wallets"], s.get("is_premium", False)), reverse=True)
     return signals

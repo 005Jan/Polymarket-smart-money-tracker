@@ -22,6 +22,10 @@ ACTIVITY_LIMIT           = 100    # últimas N transacciones por wallet
 # ── Lógica de consenso ────────────────────────────────────────────────────────
 CONSENSUS_WINDOW_MINUTES = 90     # ventana temporal para detectar consenso
 MIN_WALLETS_FOR_SIGNAL   = 2      # mínimo de wallets que deben coincidir
+# Wallets "premium" amb track record extraordinari (>$1M PnL i >95% WR):
+# una sola d'aquestes ja és senyal suficient (sense necessitat de consens)
+PREMIUM_WALLET_MIN_PNL       = 1_000_000.0
+PREMIUM_WALLET_MIN_WIN_RATE  = 0.95
 
 # ── Filtro EV (anti-exit-liquidity) ──────────────────────────────────────────
 # Si el precio actual supera en más de X% el precio medio del sniper → ABORTAR
@@ -40,7 +44,7 @@ MIN_POSITION_USD         = 5.0
 # ── Gestión de posiciones ─────────────────────────────────────────────────────
 TAKE_PROFIT_PCT          = 0.20
 STOP_LOSS_PCT            = 0.40
-MAX_HOLD_HOURS           = 72
+MAX_HOLD_HOURS           = 36   # reduït de 72→36 (els EXPIRY perden molt)
 
 # ── Filtres de diversificació i resolució (millores 2026-05-12) ──────────────
 # Màxim de posicions amb la mateixa "pregunta" base (anti-concentració)
