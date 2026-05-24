@@ -53,7 +53,7 @@ MAX_POSITIONS_PER_QUESTION = 3
 # Només entrar en mercats que es resolen en menys de X dies
 MAX_DAYS_TO_RESOLUTION     = 90   # ampliat de 30→90 (les smart wallets aposten a 60-90d)
 # Liquiditat mínima del mercat (USD) per evitar mercats il·líquids
-MIN_MARKET_LIQUIDITY_USD   = 5000.0
+MIN_MARKET_LIQUIDITY_USD   = 1000.0   # baixat de 5000→1000 (les wallets operen mercats prims)
 
 # ── sniper_catcher.py (modo daemon) ──────────────────────────────────────────
 SNIPER_RUN_INTERVAL_HOURS = 24    # buscar nuevas wallets 1 vez/día
