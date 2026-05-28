@@ -1,5 +1,10 @@
 # CopyTrader Polymarket
 
+> ⚠️ **PROJECTE ARXIVAT (2026-05-28)** — Després de 10 dies de paper trading,
+> l'estratègia no va mostrar edge (9.5% win rate, -2.47% ROI). Veure
+> [FINDINGS.md](FINDINGS.md) per a l'anàlisi complet.
+
+
 Bot quantitatiu de **copy-trading** per a Polymarket que segueix "smart wallets" (carteres rentables) per replicar les seves operacions en mode **paper trading** (simulació, sense diners reals).
 
 ## 🏗️ Arquitectura
