@@ -158,7 +158,14 @@ Si ves "No hay wallets válidas", edita config.py con direcciones reales.
 
 ## Consejos
 
-- La VPN debe estar activa antes de iniciar el bot (Polymarket puede bloquear IPs sin VPN)
+- Verifica que Polymarket está disponible en tu jurisdicción antes de usarlo
 - El bot respeta los rate limits con pausas de 2.5s entre peticiones
 - Deja correr al menos 1 semana antes de evaluar resultados
 - Revisa el CSV periódicamente para ver si las señales tienen edge real
+
+## Aviso legal
+
+Este código se publica únicamente con fines educativos y de investigación.
+El usuario es responsable de verificar la legalidad del uso de Polymarket
+en su país. Este bot **solo hace paper trading** y no ejecuta transacciones
+reales en la blockchain.
