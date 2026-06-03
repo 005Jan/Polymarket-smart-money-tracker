@@ -1,89 +1,86 @@
-# CopyTrader Polymarket
+# Polymarket Smart Money Tracker
 
-> ⚠️ **PROJECTE ARXIVAT (2026-05-28)** — Després de 10 dies de paper trading,
-> l'estratègia no va mostrar edge (9.5% win rate, -2.47% ROI). Veure
-> [FINDINGS.md](FINDINGS.md) per a l'anàlisi complet.
+> ⚠️ **PROJECT ARCHIVED (2026-05-28)** — After 10 days of paper trading, the strategy showed no edge (9.5% win rate, -2.47% ROI). See [FINDINGS.md](FINDINGS.md) for the full analysis.
 
+A quantitative **copy-trading bot** for Polymarket that identifies profitable "smart wallets" from the leaderboard and replicates their trades in **paper trading mode** (simulation only, no real funds).
 
-Bot quantitatiu de **copy-trading** per a Polymarket que segueix "smart wallets" (carteres rentables) per replicar les seves operacions en mode **paper trading** (simulació, sense diners reals).
+## Architecture
 
-## 🏗️ Arquitectura
+Docker-based system with two services:
 
-Sistema basat en Docker amb dos serveis:
-
-| Servei | Funció |
+| Service | Function |
 |---|---|
-| `sniper-catcher` | Cada 24h, escaneja el leaderboard de Polymarket i identifica wallets amb alt PnL i win-rate per copiar |
-| `copytrader` | Cada 60s, monitoritza l'activitat de les wallets i replica compres/vendes quan hi ha consens |
+| `sniper-catcher` | Every 24h, scans the Polymarket leaderboard and identifies wallets with high PnL and win-rate |
+| `copytrader` | Every 60s, monitors wallet activity and replicates trades when consensus is detected |
 
-## 🚀 Inici ràpid
+## Quick Start
 
 ```bash
-# 1. Generar la llista inicial de smart wallets (triga ~20 min)
+# 1. Generate initial smart wallets list (~20 min)
 sudo docker compose up --build sniper-catcher
 
-# 2. Iniciar tots dos serveis en segon pla
+# 2. Start both services in background
 sudo docker compose up -d
 ```
 
-## 📂 Estructura del projecte
+## Project Structure
 
 ```
 copytrader/
-├── main.py                 # Loop principal del bot copytrader
-├── sniper_catcher.py       # Cerca de smart wallets
-├── radar.py                # Escaneig d'activitat de wallets
-├── logic.py                # Detecció de consens i risc
+├── main.py                 # Core copytrader loop
+├── sniper_catcher.py       # Smart wallet discovery
+├── radar.py                # Wallet activity scanner
+├── logic.py                # Consensus detection & risk management
 ├── simulator.py            # Paper trading log
-├── clob_client.py          # Client API Polymarket (CLOB + Gamma)
-├── config.py               # Paràmetres centrals
+├── clob_client.py          # Polymarket API client (CLOB + Gamma)
+├── config.py               # Central configuration
 ├── Dockerfile
 ├── docker-compose.yml
-└── data/                   # CSV de simulació, logs, wallets (no commitejat)
+└── data/                   # Simulation CSVs, logs, wallets (gitignored)
 ```
 
-## ⚙️ Configuració principal
+## Configuration
 
-Tots els paràmetres a `config.py`:
+All parameters in `config.py`:
 
-| Paràmetre | Valor | Descripció |
+| Parameter | Value | Description |
 |---|---|---|
-| `MIN_WALLETS_FOR_SIGNAL` | 2 | Mínim de wallets que han de coincidir per generar senyal |
-| `EV_MAX_SLIPPAGE_PCT` | 15% | Màxim de premium acceptable vs preu del sniper |
-| `MAX_DAYS_TO_RESOLUTION` | 90 | Només entrar en mercats que es resolen en menys de X dies |
-| `MAX_POSITIONS_PER_QUESTION` | 3 | Anti-concentració per pregunta |
-| `MIN_MARKET_LIQUIDITY_USD` | 5000 | Saltar mercats il·líquids |
-| `TAKE_PROFIT_PCT` | 20% | Tancament per guany |
-| `STOP_LOSS_PCT` | 40% | Tancament per pèrdua |
-| `MAX_HOLD_HOURS` | 72 | Tancament per expiració |
-| `KELLY_FRACTION` | 0.25 | Sizing conservador (1/4 Kelly) |
+| `MIN_WALLETS_FOR_SIGNAL` | 2 | Minimum wallet consensus to trigger a trade |
+| `EV_MAX_SLIPPAGE_PCT` | 15% | Maximum acceptable premium vs sniper entry price |
+| `MAX_DAYS_TO_RESOLUTION` | 90 | Only enter markets resolving within X days |
+| `MAX_POSITIONS_PER_QUESTION` | 3 | Anti-concentration per question |
+| `MIN_MARKET_LIQUIDITY_USD` | 5000 | Skip illiquid markets |
+| `TAKE_PROFIT_PCT` | 20% | Close on gain |
+| `STOP_LOSS_PCT` | 40% | Close on loss |
+| `MAX_HOLD_HOURS` | 72 | Close on expiry |
+| `KELLY_FRACTION` | 0.25 | Conservative sizing (1/4 Kelly) |
 
-## 🛡️ Sistemes de risc
+## Risk Management
 
-- **Filtre EV (anti exit-liquidity):** rebutja entrades on el preu ja ha pujat massa respecte al que va pagar el sniper
-- **Quarantena de wallets:** una wallet amb 3 pèrdues consecutives queda exclosa 7 dies
-- **Seguiment de vendes:** tanquem quan les smart wallets venen (`WALLET_EXIT`)
-- **Diversificació:** màxim 3 posicions per pregunta del mercat
+- **EV filter (anti exit-liquidity):** rejects entries where price has already moved too far from the sniper's entry
+- **Wallet quarantine:** a wallet with 3 consecutive losses is excluded for 7 days
+- **Exit tracking:** closes positions when smart wallets sell (`WALLET_EXIT` signal)
+- **Diversification:** max 3 positions per market question
 
-## 📊 Outputs
+## Outputs
 
-- `data/simulacion_trading.csv` — Log de totes les operacions (apertures i tancaments)
-- `data/bot.log` — Log detallat del bot
-- `data/smart_wallets.json` — Llista actual de wallets a seguir
+| File | Content |
+|---|---|
+| `data/simulacion_trading.csv` | Full trade log (entries and exits) |
+| `data/bot.log` | Detailed bot log |
+| `data/smart_wallets.json` | Current tracked wallets |
 
-## ⚠️ Seguretat
+## Security
 
-Aquest bot **NO interactua amb claus privades ni blockchain**. Només llegeix dades públiques de Polymarket i registra les operacions simulades en un CSV local.
+This bot **does not interact with private keys or blockchain**. It only reads public Polymarket data and logs simulated operations.
 
-## 📈 Filtres aplicats per detectar smart wallets
+## Results
 
-| Filtre | Valor | Descripció |
-|---|---|---|
-| F1 | Avg trade > $50 | Evitar wallets "lotto" amb tiquets minúsculs |
-| F2 | 20-500 trades en 90d | Evitar market makers i wallets inactives |
-| F3 | Win rate > 65% | Només wallets consistents |
-| F4 | PnL > $2,000 | Volum mínim de guany |
+After 10 days of live paper trading:
+- **Win rate:** 9.5%
+- **ROI:** -2.47%
+- **Conclusion:** Copy-trading on prediction markets does not provide a reliable edge when wallets are already widely tracked. See [FINDINGS.md](FINDINGS.md) for detailed analysis.
 
----
+## License
 
-*Projecte personal de paper trading. Cap diner real implicat.*
+MIT
