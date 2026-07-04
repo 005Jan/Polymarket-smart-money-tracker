@@ -1,19 +1,36 @@
-# Polymarket Smart Money Tracker
+<div align="center">
 
-> ⚠️ **PROJECT ARCHIVED (2026-05-28)** — After 10 days of paper trading, the strategy showed no edge (9.5% win rate, -2.47% ROI). See [FINDINGS.md](FINDINGS.md) for the full analysis.
+# Polymarket Smart Money Tracker 📈
 
-A quantitative **copy-trading bot** for Polymarket that identifies profitable "smart wallets" from the leaderboard and replicates their trades in **paper trading mode** (simulation only, no real funds).
+**A quantitative copy-trading bot for Polymarket.** It spots profitable "smart
+wallets" on the leaderboard and replicates their trades in **paper trading mode**
+— simulation only, no real funds, no private keys.
 
-## Architecture
+![Python](https://img.shields.io/badge/Python-3.11-3776AB?logo=python&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+![Polymarket](https://img.shields.io/badge/Polymarket-CLOB%20%2B%20Gamma-6A5ACD)
+![Mode](https://img.shields.io/badge/mode-paper%20trading-8A2BE2)
+![Status](https://img.shields.io/badge/status-archived-lightgrey)
+![License](https://img.shields.io/badge/license-MIT-blue)
 
-Docker-based system with two services:
+</div>
 
-| Service | Function |
+---
+
+> ⚠️ **PROJECT ARCHIVED (2026-05-28)** — After 10 days of paper trading, the
+> strategy showed no edge (9.5% win rate, -2.47% ROI). See
+> [FINDINGS.md](FINDINGS.md) for the full analysis.
+
+## 🏗️ How it works
+
+A Docker-based system with two services working together:
+
+| | |
 |---|---|
-| `sniper-catcher` | Every 24h, scans the Polymarket leaderboard and identifies wallets with high PnL and win-rate |
-| `copytrader` | Every 60s, monitors wallet activity and replicates trades when consensus is detected |
+| 🎯 **`sniper-catcher`** | Every 24h, scans the Polymarket leaderboard and identifies wallets with high PnL and win-rate |
+| 🔁 **`copytrader`** | Every 60s, monitors wallet activity and replicates trades when consensus is detected |
 
-## Quick Start
+## 🚀 Quick start
 
 ```bash
 # 1. Generate initial smart wallets list (~20 min)
@@ -23,7 +40,7 @@ sudo docker compose up --build sniper-catcher
 sudo docker compose up -d
 ```
 
-## Project Structure
+## 📁 Project structure
 
 ```
 copytrader/
@@ -39,9 +56,9 @@ copytrader/
 └── data/                   # Simulation CSVs, logs, wallets (gitignored)
 ```
 
-## Configuration
+## ⚙️ Configuration
 
-All parameters in `config.py`:
+All parameters live in `config.py`:
 
 | Parameter | Value | Description |
 |---|---|---|
@@ -55,14 +72,14 @@ All parameters in `config.py`:
 | `MAX_HOLD_HOURS` | 72 | Close on expiry |
 | `KELLY_FRACTION` | 0.25 | Conservative sizing (1/4 Kelly) |
 
-## Risk Management
+## 🛡️ Risk management
 
-- **EV filter (anti exit-liquidity):** rejects entries where price has already moved too far from the sniper's entry
-- **Wallet quarantine:** a wallet with 3 consecutive losses is excluded for 7 days
-- **Exit tracking:** closes positions when smart wallets sell (`WALLET_EXIT` signal)
-- **Diversification:** max 3 positions per market question
+- ⚖️ **EV filter (anti exit-liquidity):** rejects entries where price has already moved too far from the sniper's entry
+- 🚧 **Wallet quarantine:** a wallet with 3 consecutive losses is excluded for 7 days
+- 🚪 **Exit tracking:** closes positions when smart wallets sell (`WALLET_EXIT` signal)
+- 🧩 **Diversification:** max 3 positions per market question
 
-## Outputs
+## 📊 Outputs
 
 | File | Content |
 |---|---|
@@ -70,17 +87,23 @@ All parameters in `config.py`:
 | `data/bot.log` | Detailed bot log |
 | `data/smart_wallets.json` | Current tracked wallets |
 
-## Security
+## 🔒 Security
 
-This bot **does not interact with private keys or blockchain**. It only reads public Polymarket data and logs simulated operations.
+This bot **does not interact with private keys or blockchain**. It only reads
+public Polymarket data and logs simulated operations.
 
-## Results
+## 📉 Results
 
 After 10 days of live paper trading:
-- **Win rate:** 9.5%
-- **ROI:** -2.47%
-- **Conclusion:** Copy-trading on prediction markets does not provide a reliable edge when wallets are already widely tracked. See [FINDINGS.md](FINDINGS.md) for detailed analysis.
 
-## License
+| | |
+|---|---|
+| 🎯 **Win rate** | 9.5% |
+| 💸 **ROI** | -2.47% |
+| 🧠 **Conclusion** | Copy-trading on prediction markets does not provide a reliable edge when wallets are already widely tracked |
 
-MIT
+See [FINDINGS.md](FINDINGS.md) for the detailed analysis.
+
+## 📄 License
+
+MIT — do whatever you want with it.
