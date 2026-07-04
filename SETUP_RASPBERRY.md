@@ -1,6 +1,6 @@
-# Instalación en Raspberry Pi
+# 🍓 Instalación en Raspberry Pi
 
-## Estructura de archivos
+## 📁 Estructura de archivos
 
 ```
 /home/pi/copytrader/
@@ -17,7 +17,7 @@
 
 ---
 
-## Paso 1 — Copiar archivos a la Raspberry Pi
+## 📦 Paso 1 — Copiar archivos a la Raspberry Pi
 
 Desde tu ordenador (con la Pi en la misma red o via VPN):
 
@@ -30,7 +30,7 @@ scp -r CopyTrader/ pi@IP_DE_TU_PI:/home/pi/copytrader
 
 ---
 
-## Paso 2 — Instalar Python y dependencias en la Pi
+## 🐍 Paso 2 — Instalar Python y dependencias en la Pi
 
 ```bash
 ssh pi@IP_DE_TU_PI
@@ -51,7 +51,7 @@ venv/bin/pip install -r requirements.txt
 
 ---
 
-## Paso 3 — Configurar wallets objetivo
+## 🎯 Paso 3 — Configurar wallets objetivo
 
 Edita `config.py` y añade las direcciones de las wallets:
 
@@ -73,7 +73,7 @@ TARGET_WALLETS = [
 
 ---
 
-## Paso 4a — Ejecutar con tmux (más simple, para probar)
+## 🖥️ Paso 4a — Ejecutar con tmux (más simple, para probar)
 
 ```bash
 # Instalar tmux si no está
@@ -93,7 +93,7 @@ venv/bin/python main.py
 
 ---
 
-## Paso 4b — Ejecutar como servicio systemd (para producción 24/7)
+## ⚙️ Paso 4b — Ejecutar como servicio systemd (para producción 24/7)
 
 ```bash
 # Copiar el archivo de servicio
@@ -122,7 +122,7 @@ sudo systemctl stop copytrader
 
 ---
 
-## Paso 5 — Ver resultados
+## 📊 Paso 5 — Ver resultados
 
 El bot crea `simulacion_trading.csv` automáticamente.
 
@@ -141,7 +141,7 @@ csvlook simulacion_trading.csv | less -S
 
 ---
 
-## Verificar que el bot funciona
+## ✅ Verificar que el bot funciona
 
 En los primeros 2-3 ciclos deberías ver en los logs:
 
@@ -156,14 +156,14 @@ Si ves "No hay wallets válidas", edita config.py con direcciones reales.
 
 ---
 
-## Consejos
+## 💡 Consejos
 
 - Verifica que Polymarket está disponible en tu jurisdicción antes de usarlo
 - El bot respeta los rate limits con pausas de 2.5s entre peticiones
 - Deja correr al menos 1 semana antes de evaluar resultados
 - Revisa el CSV periódicamente para ver si las señales tienen edge real
 
-## Aviso legal
+## ⚖️ Aviso legal
 
 Este código se publica únicamente con fines educativos y de investigación.
 El usuario es responsable de verificar la legalidad del uso de Polymarket
